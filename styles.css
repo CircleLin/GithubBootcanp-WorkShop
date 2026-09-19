@@ -9,7 +9,46 @@
   --danger-hover: #b91c1c;
   --border: #d1d5db;
   --item-bg: #f9fafb;
+  --empty-bg: #f8fafc;
+  --button-text: #ffffff;
+  --focus-ring: rgba(15, 118, 110, 0.25);
   --shadow: 0 14px 30px rgba(15, 23, 42, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg-color: #111827;
+    --card-bg: #1f2937;
+    --text-main: #f3f4f6;
+    --text-subtle: #9ca3af;
+    --primary: #2dd4bf;
+    --primary-hover: #5eead4;
+    --danger: #f87171;
+    --danger-hover: #fca5a5;
+    --border: #4b5563;
+    --item-bg: #374151;
+    --empty-bg: #273449;
+    --button-text: #111827;
+    --focus-ring: rgba(45, 212, 191, 0.3);
+    --shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-color: #111827;
+  --card-bg: #1f2937;
+  --text-main: #f3f4f6;
+  --text-subtle: #9ca3af;
+  --primary: #2dd4bf;
+  --primary-hover: #5eead4;
+  --danger: #f87171;
+  --danger-hover: #fca5a5;
+  --border: #4b5563;
+  --item-bg: #374151;
+  --empty-bg: #273449;
+  --button-text: #111827;
+  --focus-ring: rgba(45, 212, 191, 0.3);
+  --shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
 }
 
 * {
@@ -23,7 +62,7 @@ body {
   place-items: center;
   padding: 20px;
   background:
-    radial-gradient(circle at 12% 8%, #ffffff 0%, #f4f7fb 38%, #eef2f9 100%);
+    radial-gradient(circle at 12% 8%, var(--card-bg) 0%, var(--bg-color) 38%, var(--item-bg) 100%);
   color: var(--text-main);
   font-family: "Segoe UI", "Noto Sans TC", sans-serif;
 }
@@ -42,9 +81,34 @@ body {
   font-size: 1.7rem;
 }
 
+.app__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .app__header p {
   margin: 8px 0 0;
   color: var(--text-subtle);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  background-color: var(--item-bg);
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.theme-toggle:hover,
+.filter-button:hover {
+  border-color: var(--primary);
 }
 
 .todo-input {
@@ -62,7 +126,7 @@ body {
 }
 
 .todo-input input:focus {
-  outline: 2px solid rgba(15, 118, 110, 0.25);
+  outline: 2px solid var(--focus-ring);
   border-color: var(--primary);
 }
 
@@ -71,9 +135,32 @@ body {
   border-radius: 10px;
   padding: 0 18px;
   background-color: var(--primary);
-  color: #ffffff;
+  color: var(--button-text);
   font-size: 0.95rem;
   cursor: pointer;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.filter-button {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background-color: transparent;
+  color: var(--text-subtle);
+  cursor: pointer;
+}
+
+.filter-button.is-active {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--button-text);
+  font-weight: 600;
 }
 
 .todo-input button:hover {
@@ -88,7 +175,7 @@ body {
   margin: 8px 0;
   color: var(--text-subtle);
   text-align: center;
-  background-color: #f8fafc;
+  background-color: var(--empty-bg);
   border-radius: 10px;
   padding: 14px;
 }
@@ -106,7 +193,7 @@ body {
   align-items: center;
   gap: 12px;
   background-color: var(--item-bg);
-  border: 1px solid #edf0f4;
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 10px 12px;
 }
@@ -139,13 +226,13 @@ body {
 }
 
 .delete-btn:hover {
-  background-color: #fee2e2;
+  background-color: var(--empty-bg);
   color: var(--danger-hover);
 }
 
 .app__footer {
   margin-top: 18px;
-  border-top: 1px solid #eceff4;
+  border-top: 1px solid var(--border);
   padding-top: 14px;
 }
 

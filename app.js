@@ -5,14 +5,39 @@ const addButton = document.getElementById("addButton");
 const todoList = document.getElementById("todoList");
 const emptyHint = document.getElementById("emptyHint");
 const pendingCount = document.getElementById("pendingCount");
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+const themeLabel = document.getElementById("themeLabel");
+const filterButtons = document.querySelectorAll(".filter-button");
+
+const THEME_STORAGE_KEY = "todo-theme";
+let currentFilter = "all";
 
 let todos = loadTodos();
+
+initTheme();
 
 // 初始化畫面
 render();
 
 // 綁定新增按鈕事件
 addButton.addEventListener("click", handleAddTodo);
+
+themeToggle.addEventListener("click", toggleTheme);
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    currentFilter = button.dataset.filter;
+
+    filterButtons.forEach((filterButton) => {
+      const isActive = filterButton === button;
+      filterButton.classList.toggle("is-active", isActive);
+      filterButton.setAttribute("aria-pressed", String(isActive));
+    });
+
+    render();
+  });
+});
 
 // 綁定輸入框 Enter 事件，方便快速新增
 todoTextInput.addEventListener("keydown", (event) => {
@@ -59,7 +84,19 @@ function removeTodo(id) {
 function render() {
   todoList.innerHTML = "";
 
-  todos.forEach((todo) => {
+  const visibleTodos = todos.filter((todo) => {
+    if (currentFilter === "active") {
+      return !todo.completed;
+    }
+
+    if (currentFilter === "completed") {
+      return todo.completed;
+    }
+
+    return true;
+  });
+
+  visibleTodos.forEach((todo) => {
     const item = document.createElement("li");
     item.className = "todo-item";
 
@@ -91,8 +128,46 @@ function render() {
   const pending = todos.filter((todo) => !todo.completed).length;
   pendingCount.textContent = `未完成:${pending} 項`;
 
-  // 清單為空時顯示提示文字
-  emptyHint.style.display = todos.length === 0 ? "block" : "none";
+  // 依照目前篩選結果顯示對應提示文字
+  emptyHint.textContent = getEmptyHintText();
+  emptyHint.style.display = visibleTodos.length === 0 ? "block" : "none";
+}
+
+function getEmptyHintText() {
+  if (todos.length === 0) {
+    return "還沒有任何待辦事項,新增一個吧!";
+  }
+
+  return currentFilter === "active"
+    ? "太棒了,沒有未完成的事項!"
+    : "還沒有已完成的事項。";
+}
+
+function initTheme() {
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+  const theme = savedTheme === "light" || savedTheme === "dark"
+    ? savedTheme
+    : window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+
+  applyTheme(theme);
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  const isDark = theme === "dark";
+
+  themeIcon.textContent = isDark ? "☀️" : "🌙";
+  themeLabel.textContent = isDark ? "淺色模式" : "深色模式";
+  themeToggle.setAttribute("aria-pressed", String(isDark));
+}
+
+function toggleTheme() {
+  const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+
+  localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+  applyTheme(nextTheme);
 }
 
 function saveTodos() {
