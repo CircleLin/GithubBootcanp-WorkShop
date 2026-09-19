@@ -139,8 +139,8 @@ function getEmptyHintText() {
   }
 
   return currentFilter === "active"
-    ? "太棒了,沒有未完成的事項!"
-    : "還沒有已完成的事項。";
+    ? "目前沒有未完成的事項,可能已被篩選條件排除。"
+    : "目前沒有已完成的事項,可能已被篩選條件排除。";
 }
 
 function initTheme() {
