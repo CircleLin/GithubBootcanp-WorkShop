@@ -11,11 +11,13 @@ const themeLabel = document.getElementById("themeLabel");
 const filterButtons = document.querySelectorAll(".filter-button");
 
 const THEME_STORAGE_KEY = "todo-theme";
-let currentFilter = "all";
+const FILTER_STORAGE_KEY = "todo-filter";
+let currentFilter = loadFilter();
 
 let todos = loadTodos();
 
 initTheme();
+updateFilterButtons();
 
 // 初始化畫面
 render();
@@ -28,13 +30,8 @@ themeToggle.addEventListener("click", toggleTheme);
 filterButtons.forEach((button) => {
   button.addEventListener("click", () => {
     currentFilter = button.dataset.filter;
-
-    filterButtons.forEach((filterButton) => {
-      const isActive = filterButton === button;
-      filterButton.classList.toggle("is-active", isActive);
-      filterButton.setAttribute("aria-pressed", String(isActive));
-    });
-
+    localStorage.setItem(FILTER_STORAGE_KEY, currentFilter);
+    updateFilterButtons();
     render();
   });
 });
@@ -141,6 +138,21 @@ function getEmptyHintText() {
   return currentFilter === "active"
     ? "目前沒有未完成的事項,可能已被篩選條件排除。"
     : "目前沒有已完成的事項,可能已被篩選條件排除。";
+}
+
+function loadFilter() {
+  const savedFilter = localStorage.getItem(FILTER_STORAGE_KEY);
+  const validFilters = ["all", "active", "completed"];
+
+  return validFilters.includes(savedFilter) ? savedFilter : "all";
+}
+
+function updateFilterButtons() {
+  filterButtons.forEach((button) => {
+    const isActive = button.dataset.filter === currentFilter;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
 }
 
 function initTheme() {
